@@ -56,7 +56,7 @@ struct Interval {
             case .groß:       valid = [.Second, .Terz,  .Sexte, .Septime]
             case .klein:      valid = [.Second, .Terz,  .Sexte, .Septime]
             case .übermäßig:  return true
-            case .vermindert: valid = [.Second, .Terz,  .Sexte, .Septime]
+            case .vermindert: valid = [.Second, .Terz, .Quarte, .Quinte, .Sexte, .Septime]
             case .tritonus:   valid = [.Quarte, .Quinte]
         }
         
@@ -72,15 +72,24 @@ struct Interval {
     }
     
     var name: String {
+        if modifier == .tritonus || halfTones == 6 {
+            return "Tritonus"
+        }
         return "\(type.name) \(modifier.name)"
+    }
+    
+    var describe: String {
+        return "\(name) (\(lines) , \(halfTones)) -> valid: \(checkTypeVsModifier())"
     }
 }
 
+var terz  = Interval(type: .Terz, modifier: .groß)
+var tri   = Interval(type: .Quinte, modifier: .vermindert)
+var tri2  = Interval(type: .Quarte, modifier: .übermäßig)
 
-var terz = Interval(type: .Terz, modifier: .groß)
-
-print("\(terz.name) (\(terz.lines) , \(terz.halfTones)) -> valid: \(terz.checkTypeVsModifier()  )\n")
-
+print("\(terz.describe)\n")
+print("\(tri.describe)\n")
+print("\(tri2.describe)\n")
 
 
 
