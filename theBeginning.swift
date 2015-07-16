@@ -91,6 +91,26 @@ print("\(terz.describe)\n")
 print("\(tri.describe)\n")
 print("\(tri2.describe)\n")
 
+/*******************************************************************/
+enum Grundton {
+    case c
+    case d
+    case e
 
+    var data: (name: String, line: Int, semitones: Int) {
+        switch self {
+            case c:
+                return ("c", 0, 0)
+            case d:
+                return ("d", 1, 2)
+            case e:
+                return ("e", 2, 4)
+        }
+    }
+}
 
+var t = Grundton.d
+println(t.data)
+println(t.data.0)
+println(t.data.name)
 
