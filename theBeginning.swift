@@ -1,10 +1,10 @@
 enum IntervalModifier: String {
-    case rein       = "rein"
-    case groß       = "groß"
-    case klein      = "klein"
-    case übermäßig  = "übermäßig"
-    case vermindert = "vermindert"
-    case tritonus   = "tritonus"
+    case rein       = "rein"       // perfect
+    case groß       = "groß"       // major
+    case klein      = "klein"      // minor
+    case übermäßig  = "übermäßig"  // augmented
+    case vermindert = "vermindert" // dimished
+    case tritonus   = "tritonus"   // tritone
 
     var name: String {
         return rawValue
@@ -12,19 +12,21 @@ enum IntervalModifier: String {
 }
 
 enum IntervalType: String {
-    case Prim     = "Prim"
-    case Second   = "Second"
-    case Terz     = "Terz"
-    case Quarte   = "Quarte"
-    case Quinte   = "Quinte"
-    case Sexte    = "Sexte"
-    case Septime  = "Septe"
-    case Oktave   = "Oktave"
+    case Prim     = "Prim"    // unison
+    case Second   = "Second"  // 2nd
+    case Terz     = "Terz"    // 3rd
+    case Quarte   = "Quarte"  // 4th
+    case Quinte   = "Quinte"  // 5th
+    case Sexte    = "Sexte"   // 6th
+    case Septime  = "Septe"   // 7th
+    case Oktave   = "Oktave"  // octave
     
     var name : String {
         return rawValue
     }
 }
+
+// ♯ ♭
 
 var matrix = [IntervalType : [IntervalModifier : (Int, Int?)]]()
 //                                                ^    ^
