@@ -8,16 +8,16 @@ enum IntervalModifier {
     case doppeltVermindert
     case tritonus
 
-    var values: (name: String, semiTones: Int) {
+    var values: (name: String, semitones: Int) {
         switch self {
-            case rein:        return ("rein"      ,  0) // perfect
-            case groß:        return ("groß"      ,  0) // major
-            case klein:       return ("klein"     , -1) // minor
-            case übermäßig:   return ("übermäßig" ,  1) // augmented
-            case doppeltÜbermäßig: return ("doppelt übermäßig", 2)  // double augmented
-            case vermindert:  return ("vermindert", -1) // -1 bei reinen, -2 bei großen Grundintervallen // dimished
-            case doppeltVermindert: return ("doppelt vermindert", -2) // double dimished
-            case tritonus:    return ("tritonus"  ,  1) // +1 bei Quarte, -1 bei Quinte // tritone
+            case rein:              return ("rein",                0) // perfect
+            case groß:              return ("groß",                0) // major
+            case klein:             return ("klein",              -1) // minor
+            case übermäßig:         return ("übermäßig",           1) // augmented
+            case doppeltÜbermäßig:  return ("doppelt übermäßig",   2) // double augmented
+            case vermindert:        return ("vermindert",          100) // -1 bei reinen, -2 bei großen Grundintervallen // dimished
+            case doppeltVermindert: return ("doppelt vermindert",  100) // -2 bei reinen, ungültig bei großen Grundintervallen // double dimished
+            case tritonus:          return ("tritonus",            100) // +1 bei Quarte, -1 bei Quinte // tritone
         }
     }
 }
@@ -32,86 +32,120 @@ enum IntervalType {
     case Septime
     case Oktave
     
-    var values: (name: String, lines: Int, semiTones: Int) {
+    var values: (name: String, lines: Int, semitones: Int, baseModifier: IntervalModifier) {
         switch self {
-            case Prim:     return ("Prim",   0, 0)   // unison
-            case Second:   return ("Second", 1, 2)   // 2nd
-            case Terz:     return ("Terz",   2, 4)   // 3rd
-            case Quarte:   return ("Quarte", 3, 5)   // 4th
-            case Quinte:   return ("Quinte", 4, 7)   // 5th
-            case Sexte:    return ("Sexte",  5, 9)   // 6th
-            case Septime:  return ("Septe",  6, 11)  // 7th
-            case Oktave:   return ("Oktave", 7, 12)  // octave
+            case Prim:     return ("Prim",   0, 0,  .rein)  // unison
+            case Second:   return ("Second", 1, 2,  .groß)  // 2nd
+            case Terz:     return ("Terz",   2, 4,  .groß)  // 3rd
+            case Quarte:   return ("Quarte", 3, 5,  .rein)  // 4th
+            case Quinte:   return ("Quinte", 4, 7,  .rein)  // 5th
+            case Sexte:    return ("Sexte",  5, 9,  .groß)  // 6th
+            case Septime:  return ("Septe",  6, 11, .groß)  // 7th
+            case Oktave:   return ("Oktave", 7, 12, .rein)  // octave
         }
     }
 }
 
 // ♯ ♭
 
-var matrix = [IntervalType : [IntervalModifier : (Int, Int?)]]()
-//                                                ^    ^
-//    delta of lines, delta of halftones (nil means illegal modifier for interval)
-matrix[.Prim]     = [.rein: (0, 0  ), .groß: (0, nil), .klein: (0, nil), .übermäßig: (0, 1 ), .vermindert: (0, -1), .tritonus: (0, nil)]
-matrix[.Second]   = [.rein: (1, nil), .groß: (1, 2  ), .klein: (1, 1  ), .übermäßig: (1, 3 ), .vermindert: (1, 0 ), .tritonus: (1, nil)]
-matrix[.Terz]     = [.rein: (2, nil), .groß: (2, 4  ), .klein: (2, 3  ), .übermäßig: (2, 5 ), .vermindert: (2, 2 ), .tritonus: (2, nil)]
-matrix[.Quarte]   = [.rein: (3, 5  ), .groß: (3, nil), .klein: (3, nil), .übermäßig: (3, 6 ), .vermindert: (3, 4 ), .tritonus: (3, 6  )]
-matrix[.Quinte]   = [.rein: (4, 7  ), .groß: (4, nil), .klein: (4, nil), .übermäßig: (4, 8 ), .vermindert: (4, 6 ), .tritonus: (4, 6  )]
-matrix[.Sexte]    = [.rein: (5, nil), .groß: (5, 9  ), .klein: (5, 8  ), .übermäßig: (5, 10), .vermindert: (5, 7 ), .tritonus: (5, nil)]
-matrix[.Septime]  = [.rein: (6, nil), .groß: (6, 11 ), .klein: (6, 10 ), .übermäßig: (6, 12), .vermindert: (6, 9 ), .tritonus: (6, nil)]
-matrix[.Oktave]   = [.rein: (7, 12 ), .groß: (7, nil), .klein: (7, nil), .übermäßig: (7, 13), .vermindert: (7, 11), .tritonus: (7, nil)]
 
 struct Interval {
     var type = IntervalType.Prim
-    var modifier = IntervalModifier.rein
+    var modifier = IntervalType.Prim.values.baseModifier
     
     init(type: IntervalType, modifier: IntervalModifier) {
         self.type = type
         self.modifier = modifier
-
-        checkTypeVsModifier()
     }
     
-    func checkTypeVsModifier() -> Bool {
-        var valid: Set<IntervalType>
-        switch modifier {
-            case .rein:       valid = [.Prim, .Quarte, .Quinte, .Oktave]
-            case .groß:       valid = [.Second, .Terz,  .Sexte, .Septime]
-            case .klein:      valid = [.Second, .Terz,  .Sexte, .Septime]
-            case .übermäßig:  return true
-            case .vermindert: valid = [.Second, .Terz, .Quarte, .Quinte, .Sexte, .Septime]
-            case .tritonus:   valid = [.Quarte, .Quinte]
+    var validate: Bool {
+        if type.values.baseModifier == .groß {
+            if modifier == .rein ||
+               modifier == .tritonus ||
+               modifier == .doppeltVermindert {
+                return false
+            }
+        }
+
+        if type.values.baseModifier == .rein {
+            if modifier == .groß || 
+               modifier == .klein {
+                return false
+            }
         }
         
-        return valid.contains(type)
+        if modifier == .tritonus &&
+           (type != .Quinte && type != .Quarte) {
+               return false
+        }
+        
+        return true
     }
     
-    var lines: Int {
-        return matrix[type]![modifier]!.0
-    }
-    
-    var halfTones: Int {
-        return matrix[type]![modifier]!.1!
+    var semitones: Int {
+        var st = 0
+        
+        switch modifier {
+            case .vermindert:
+                if (type.values.baseModifier == .rein) {
+                    st = type.values.semitones - 1
+                }
+                else {
+                    st = type.values.semitones - 2
+                }
+            case .doppeltVermindert:
+                if (type.values.baseModifier == .rein) {
+                    st = type.values.semitones - 2
+                }
+                else {
+                    st = 0 // invalid modifier validate must have returned false
+                }
+            case .tritonus:
+                if (type == .Quarte) {
+                    st = type.values.semitones + 1
+                }
+                else if (type == .Quinte) {
+                    st = type.values.semitones - 1
+                }
+                else {
+                    st = 0 // invalid modifier validate must have returned false
+                }
+            default:
+                st = type.values.semitones + modifier.values.semitones
+        }
+        
+        return st
     }
     
     var name: String {
-        if modifier == .tritonus || halfTones == 6 {
+        if !validate {
+            return "Fehler: \(type.values.name) \(modifier.values.name)"
+        }
+        if modifier == .tritonus || semitones == 6 {
             return "Tritonus"
         }
-        return "\(type.name) \(modifier.name)"
+        return "\(type.values.name) \(modifier.values.name)"
     }
     
     var describe: String {
-        return "\(name) (\(lines) , \(halfTones)) -> valid: \(checkTypeVsModifier())"
+        return "\(name) (\(type.values.lines) , \(semitones))"
     }
 }
 
 var terz  = Interval(type: .Terz, modifier: .groß)
 var tri   = Interval(type: .Quinte, modifier: .vermindert)
 var tri2  = Interval(type: .Quarte, modifier: .übermäßig)
+var tri3  = Interval(type: .Quarte, modifier: .tritonus)
+var tri4  = Interval(type: .Quinte, modifier: .tritonus)
+var tri5  = Interval(type: .Prim, modifier: .tritonus)
 
 print("\(terz.describe)\n")
 print("\(tri.describe)\n")
 print("\(tri2.describe)\n")
+print("\(tri3.describe)\n")
+print("\(tri4.describe)\n")
+print("\(tri5.describe)\n")
+
 
 /*******************************************************************/
 enum Grundton {
@@ -135,4 +169,3 @@ var t = Grundton.d
 println(t.data)
 println(t.data.0)
 println(t.data.name)
-
