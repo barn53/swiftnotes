@@ -177,28 +177,28 @@ enum Oktave {
     eingestrichene, zweigestrichene, dreigestrichene, viergestrichene, fünfgestrichene
     // die eingestrichene ist das c' auf der ersten Hilfslinie unten im Violinschlüssel
     
-    var values: (lineDelta: Int, upper: Bool, postPräfix: String) {
+    var values: (lineDelta: Int, numeric: Int, upper: Bool, postPräfix: String) {
         switch self {
             case .subsubkontra:
-                return (-35, true, ",,,")
+                return (-35, -5, true, ",,,")
             case .subkontra:
-                return (-28, true, ",,")
+                return (-28, -4, true, ",,")
             case .kontra:
-                return (-21, true, ",")
+                return (-21, -3, true, ",")
             case .große:
-                return (-14, true, "")
+                return (-14, -2, true, "")
             case .kleine:
-                return (-7, false, "")
+                return (-7, -1, false, "")
             case .eingestrichene:
-                return (0, false, "'")
+                return (0, 0, false, "'")
             case .zweigestrichene:
-                return (7, false, "''")
+                return (7, 1, false, "''")
             case .dreigestrichene:
-                return (14, false, "'''")
+                return (14, 2, false, "'''")
             case .viergestrichene:
-                return (21, false, "''''")
+                return (21, 3, false, "''''")
             case .fünfgestrichene:
-                return (28, false, "'''''")
+                return (28, 4, false, "'''''")
         }
     }
 }
@@ -234,14 +234,18 @@ struct Note {
         return grundTon.values.line + oktave.values.lineDelta + notenschlüssel.values.lineDelta
     }
     
+    var semitones: Int {
+        return grundTon.values.semitones + vorzeichen.values.deltaSemitones + (oktave.values.numeric * 12)
+    }
+    
     var describe: String {
         var name = oktave.values.upper
         ? 
-        oktave.values.postPräfix + grundTon.values.name.uppercaseString
+        oktave.values.postPräfix + grundTon.values.name.uppercaseString + vorzeichen.values.name
         :
-        grundTon.values.name + oktave.values.postPräfix
+        grundTon.values.name + vorzeichen.values.name + oktave.values.postPräfix
         
-        return "\(name) - \(notenschlüssel.values.name), Linie \(line)"
+        return "\(name) - \(notenschlüssel.values.name), Halbtöne: \(semitones), Linie: \(line)"
     }
 }
 
@@ -249,9 +253,8 @@ var c = Note()
 
 //c.oktave = .große
 c.notenschlüssel = .bass
+c.vorzeichen = .be
 print(c.describe)
-
-
 
 
 
