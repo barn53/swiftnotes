@@ -1,4 +1,4 @@
-enum IntervalModifier: String {
+enum IntervalModifier {
     case rein       = "rein"       // perfect
     case groß       = "groß"       // major
     case klein      = "klein"      // minor
@@ -6,8 +6,15 @@ enum IntervalModifier: String {
     case vermindert = "vermindert" // dimished
     case tritonus   = "tritonus"   // tritone
 
-    var name: String {
-        return rawValue
+    var values: (name: String, semiTones: Int) {
+        switch self {
+            case rein:        return ("rein"      , 0) // perfect
+            case groß:        return ("groß"      , 0) // major
+            case klein:       return ("klein"     , -1) // minor
+            case übermäßig:   return ("übermäßig" , 1) // augmented
+            case vermindert:  return ("vermindert", -2) // dimished
+            case tritonus:    return ("tritonus"  , +1) // tritone
+        }
     }
 }
 
@@ -21,16 +28,16 @@ enum IntervalType {
     case Septime
     case Oktave
     
-    var values: (lines: Int, name: String) {
+    var values: (name: String, lines: Int) {
         switch self {
-            case Prim:     return (0, "Prim")    // unison
-            case Second:   return (0, "Second")  // 2nd
-            case Terz:     return (0, "Terz")    // 3rd
-            case Quarte:   return (0, "Quarte")  // 4th
-            case Quinte:   return (0, "Quinte")  // 5th
-            case Sexte:    return (0, "Sexte")   // 6th
-            case Septime:  return (0, "Septe")   // 7th
-            case Oktave:   return (0, "Oktave")  // octave
+            case Prim:     return ("Prim",   0)  // unison
+            case Second:   return ("Second", 1)  // 2nd
+            case Terz:     return ("Terz",   2)  // 3rd
+            case Quarte:   return ("Quarte", 3)  // 4th
+            case Quinte:   return ("Quinte", 4)  // 5th
+            case Sexte:    return ("Sexte",  5)  // 6th
+            case Septime:  return ("Septe",  6)  // 7th
+            case Oktave:   return ("Oktave", 7)  // octave
         }
     }
 }
