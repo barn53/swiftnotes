@@ -249,12 +249,16 @@ struct Note {
     }
 }
 
-var c = Note()
+var d = Note()
+var fis = Note()
 
-//c.oktave = .große
-c.notenschlüssel = .bass
-c.vorzeichen = .be
-print(c.describe)
+d.grundTon = .d
+
+fis.grundTon = .f
+fis.vorzeichen = .kreuz
+
+println(d.describe)
+println(fis.describe)
 
 
 
