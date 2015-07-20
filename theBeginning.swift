@@ -1,12 +1,5 @@
 enum IntervalModifier {
-    case rein
-    case groß
-    case klein
-    case übermäßig
-    case doppeltÜbermäßig
-    case vermindert
-    case doppeltVermindert
-    case tritonus
+    case rein, groß, klein, übermäßig, doppeltÜbermäßig, vermindert, doppeltVermindert, tritonus
 
     var values: (name: String, semitones: Int) {
         switch self {
@@ -23,14 +16,7 @@ enum IntervalModifier {
 }
 
 enum IntervalType {
-    case Prim
-    case Second
-    case Terz
-    case Quarte
-    case Quinte
-    case Sexte
-    case Septime
-    case Oktave
+    case Prim, Second, Terz, Quarte, Quinte, Sexte, Septime, Oktave
     
     var values: (name: String, lines: Int, semitones: Int, baseModifier: IntervalModifier) {
         switch self {
@@ -132,6 +118,7 @@ var tri2  = Interval(type: .Quarte, modifier: .übermäßig)
 var tri3  = Interval(type: .Quarte, modifier: .tritonus)
 var tri4  = Interval(type: .Quinte, modifier: .tritonus)
 var tri5  = Interval(type: .Prim, modifier: .tritonus)
+var quarte  = Interval(type: .Quarte, modifier: .doppeltVermindert)
 
 print("\(terz.describe)\n")
 print("\(tri.describe)\n")
@@ -139,15 +126,14 @@ print("\(tri2.describe)\n")
 print("\(tri3.describe)\n")
 print("\(tri4.describe)\n")
 print("\(tri5.describe)\n")
+print("\(quarte.describe)\n")
 
 
 /*******************************************************************/
 enum Grundton {
-    case c
-    case d
-    case e
+    case c, d, e, f, g, a, h
 
-    var data: (name: String, line: Int, semitones: Int) {
+    var values: (name: String, line: Int, semitones: Int) {
         switch self {
             case c:
                 return ("c", 0, 0)
@@ -155,11 +141,105 @@ enum Grundton {
                 return ("d", 1, 2)
             case e:
                 return ("e", 2, 4)
+            case f:
+                return ("f", 3, 5)
+            case g:
+                return ("g", 4, 7)
+            case a:
+                return ("a", 5, 9)
+            case h:
+                return ("h", 6, 11)
         }
     }
 }
 
-var t = Grundton.d
-println(t.data)
-println(t.data.0)
-println(t.data.name)
+enum Vorzeichen {
+    case ohne, be, doppelBe, kreuz, doppelKreuz
+}
+
+enum Oktave {
+    case subsubkontra, subkontra, kontra, große, kleine, 
+    eingestrichene, zweigestrichene, dreigestrichene, viergestrichene, fünfgestrichene
+    // die eingestrichene ist das c' auf der ersten Hilfslinie unten im Violinschlüssel
+    
+    var values: (lineDelta: Int, upper: Bool, postPräfix: String) {
+        switch self {
+            case .subsubkontra:
+                return (-35, true, ",,,")
+            case .subkontra:
+                return (-28, true, ",,")
+            case .kontra:
+                return (-21, true, ",")
+            case .große:
+                return (-14, true, "")
+            case .kleine:
+                return (-7, false, "")
+            case .eingestrichene:
+                return (0, false, "'")
+            case .zweigestrichene:
+                return (7, false, "''")
+            case .dreigestrichene:
+                return (14, false, "'''")
+            case .viergestrichene:
+                return (21, false, "''''")
+            case .fünfgestrichene:
+                return (28, false, "'''''")
+        }
+    }
+}
+
+enum Notenschlüssel {
+    case violin, bass
+    
+    var values: (name: String, lineDelta: Int) /* delta Notenlinien */ {
+        switch self {
+            case .violin:
+                return ("Violinschlüssel", 0)
+            case .bass:
+                return ("Bassschlüssel", 12)
+        }
+    }
+}
+
+// Meine Definition:
+// --------------------
+// --------------------
+// --------------------
+// --------------------
+// --------------------
+//     --O--   <-- Linie 0
+
+struct Note {
+    var grundTon = Grundton.c
+    var vorzeichen = Vorzeichen.ohne
+    var oktave = Oktave.eingestrichene
+    var notenschlüssel = Notenschlüssel.violin
+    
+    var line: Int {
+        return grundTon.values.line + oktave.values.lineDelta + notenschlüssel.values.lineDelta
+    }
+    
+    var describe: String {
+        var name = oktave.values.upper
+        ? 
+        oktave.values.postPräfix + grundTon.values.name.uppercaseString
+        :
+        grundTon.values.name + oktave.values.postPräfix
+        
+        return "\(name) - \(notenschlüssel.values.name), Linie \(line)"
+    }
+}
+
+var c = Note()
+
+//c.oktave = .große
+c.notenschlüssel = .bass
+print(c.describe)
+
+
+
+
+
+
+
+
