@@ -97,18 +97,12 @@ struct Interval {
                 if (type.values.baseModifier == .rein) {
                     st = type.values.semitones - 2
                 }
-                else {
-                    st = 0 // invalid modifier validate must have returned false
-                }
             case .tritonus:
                 if (type == .Quarte) {
                     st = type.values.semitones + 1
                 }
                 else if (type == .Quinte) {
                     st = type.values.semitones - 1
-                }
-                else {
-                    st = 0 // invalid modifier validate must have returned false
                 }
             default:
                 st = type.values.semitones + modifier.values.semitones
