@@ -11,18 +11,27 @@ enum IntervalModifier: String {
     }
 }
 
-enum IntervalType: String {
-    case Prim     = "Prim"    // unison
-    case Second   = "Second"  // 2nd
-    case Terz     = "Terz"    // 3rd
-    case Quarte   = "Quarte"  // 4th
-    case Quinte   = "Quinte"  // 5th
-    case Sexte    = "Sexte"   // 6th
-    case Septime  = "Septe"   // 7th
-    case Oktave   = "Oktave"  // octave
+enum IntervalType {
+    case Prim
+    case Second
+    case Terz
+    case Quarte
+    case Quinte
+    case Sexte
+    case Septime
+    case Oktave
     
-    var name : String {
-        return rawValue
+    var values: (lines: Int, name: String) {
+        switch self {
+            case Prim:     return (0, "Prim")    // unison
+            case Second:   return (0, "Second")  // 2nd
+            case Terz:     return (0, "Terz")    // 3rd
+            case Quarte:   return (0, "Quarte")  // 4th
+            case Quinte:   return (0, "Quinte")  // 5th
+            case Sexte:    return (0, "Sexte")   // 6th
+            case Septime:  return (0, "Septe")   // 7th
+            case Oktave:   return (0, "Oktave")  // octave
+        }
     }
 }
 
