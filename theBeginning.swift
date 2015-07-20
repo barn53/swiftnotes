@@ -1,12 +1,12 @@
 enum IntervalModifier {
-    case rein              = "rein"               // perfect
-    case groß              = "groß"               // major
-    case klein             = "klein"              // minor
-    case übermäßig         = "übermäßig"          // augmented
-    case doppeltÜbermäßig  = "doppelt übermäßig"  // double augmented
-    case vermindert        = "vermindert"         // dimished
-    case doppeltVermindert = "doppelt vermindert" // double dimished
-    case tritonus          = "tritonus"           // tritone
+    case rein
+    case groß
+    case klein
+    case übermäßig
+    case doppeltÜbermäßig
+    case vermindert
+    case doppeltVermindert
+    case tritonus
 
     var values: (name: String, semiTones: Int) {
         switch self {
