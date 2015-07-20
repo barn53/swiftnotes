@@ -1,19 +1,23 @@
 enum IntervalModifier {
-    case rein       = "rein"       // perfect
-    case groß       = "groß"       // major
-    case klein      = "klein"      // minor
-    case übermäßig  = "übermäßig"  // augmented
-    case vermindert = "vermindert" // dimished
-    case tritonus   = "tritonus"   // tritone
+    case rein              = "rein"               // perfect
+    case groß              = "groß"               // major
+    case klein             = "klein"              // minor
+    case übermäßig         = "übermäßig"          // augmented
+    case doppeltÜbermäßig  = "doppelt übermäßig"  // double augmented
+    case vermindert        = "vermindert"         // dimished
+    case doppeltVermindert = "doppelt vermindert" // double dimished
+    case tritonus          = "tritonus"           // tritone
 
     var values: (name: String, semiTones: Int) {
         switch self {
-            case rein:        return ("rein"      , 0) // perfect
-            case groß:        return ("groß"      , 0) // major
+            case rein:        return ("rein"      ,  0) // perfect
+            case groß:        return ("groß"      ,  0) // major
             case klein:       return ("klein"     , -1) // minor
-            case übermäßig:   return ("übermäßig" , 1) // augmented
-            case vermindert:  return ("vermindert", -2) // dimished
-            case tritonus:    return ("tritonus"  , +1) // tritone
+            case übermäßig:   return ("übermäßig" ,  1) // augmented
+            case doppeltÜbermäßig: return ("doppelt übermäßig", 2)  // double augmented
+            case vermindert:  return ("vermindert", -1) // -1 bei reinen, -2 bei großen Grundintervallen // dimished
+            case doppeltVermindert: return ("doppelt vermindert", -2) // double dimished
+            case tritonus:    return ("tritonus"  ,  1) // +1 bei Quarte, -1 bei Quinte // tritone
         }
     }
 }
@@ -28,16 +32,16 @@ enum IntervalType {
     case Septime
     case Oktave
     
-    var values: (name: String, lines: Int) {
+    var values: (name: String, lines: Int, semiTones: Int) {
         switch self {
-            case Prim:     return ("Prim",   0)  // unison
-            case Second:   return ("Second", 1)  // 2nd
-            case Terz:     return ("Terz",   2)  // 3rd
-            case Quarte:   return ("Quarte", 3)  // 4th
-            case Quinte:   return ("Quinte", 4)  // 5th
-            case Sexte:    return ("Sexte",  5)  // 6th
-            case Septime:  return ("Septe",  6)  // 7th
-            case Oktave:   return ("Oktave", 7)  // octave
+            case Prim:     return ("Prim",   0, 0)   // unison
+            case Second:   return ("Second", 1, 2)   // 2nd
+            case Terz:     return ("Terz",   2, 4)   // 3rd
+            case Quarte:   return ("Quarte", 3, 5)   // 4th
+            case Quinte:   return ("Quinte", 4, 7)   // 5th
+            case Sexte:    return ("Sexte",  5, 9)   // 6th
+            case Septime:  return ("Septe",  6, 11)  // 7th
+            case Oktave:   return ("Oktave", 7, 12)  // octave
         }
     }
 }
