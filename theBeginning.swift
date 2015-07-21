@@ -1,3 +1,125 @@
+
+/*******************************************************************/
+enum Grundton {
+    case c, d, e, f, g, a, h
+
+    var values: (name: String, baseLine: Int, semitones: Int) {
+        switch self {
+            case c:
+                return ("c", 0, 0)
+            case d:
+                return ("d", 1, 2)
+            case e:
+                return ("e", 2, 4)
+            case f:
+                return ("f", 3, 5)
+            case g:
+                return ("g", 4, 7)
+            case a:
+                return ("a", 5, 9)
+            case h:
+                return ("h", 6, 11)
+        }
+    }
+}
+
+// ♯ ♭
+
+enum Vorzeichen {
+    case ohne, be, doppelBe, kreuz, doppelKreuz
+    
+    var values: (name: String, deltaSemitones: Int) {
+        switch self {
+            case ohne:
+                return ("", 0)
+            case be:
+                return ("♭", -1)
+            case doppelBe:
+                return ("♭♭", -2) // UTF-8: �
+            case kreuz:
+                return ("♯", 1)
+            case doppelKreuz:
+                return ("♯♯", 2)  // UTF-8: �
+        }
+    }
+}
+
+enum Oktave {
+    case subsubkontra, subkontra, kontra, große, kleine, 
+    eingestrichene, zweigestrichene, dreigestrichene, viergestrichene, fünfgestrichene
+    // die eingestrichene ist das c' auf der ersten Hilfslinie unten im Violinschlüssel
+    
+    var values: (lineDelta: Int, ordinal: Int, upper: Bool, postPräfix: String) {
+        switch self {
+            case .subsubkontra:
+                return (-35, -5, true, ",,,")
+            case .subkontra:
+                return (-28, -4, true, ",,")
+            case .kontra:
+                return (-21, -3, true, ",")
+            case .große:
+                return (-14, -2, true, "")
+            case .kleine:
+                return (-7, -1, false, "")
+            case .eingestrichene:
+                return (0, 0, false, "'")
+            case .zweigestrichene:
+                return (7, 1, false, "''")
+            case .dreigestrichene:
+                return (14, 2, false, "'''")
+            case .viergestrichene:
+                return (21, 3, false, "''''")
+            case .fünfgestrichene:
+                return (28, 4, false, "'''''")
+        }
+    }
+}
+
+enum Notenschlüssel {
+    case violin, bass
+    
+    var values: (name: String, lineDelta: Int) {
+        switch self {
+            case .violin:
+                return ("Violinschlüssel", 0)
+            case .bass:
+                return ("Bassschlüssel", 12)
+        }
+    }
+}
+
+// Meine Definition:        --12--
+// ---------------------10-----------------
+// ------------------8---------------------
+// ---------------6------------------------
+// ------------4---------------------------
+// ---------2------------------------------
+//     --0--   <-- Linie 0
+
+struct Note {
+    var grundTon = Grundton.c
+    var vorzeichen = Vorzeichen.ohne
+    var oktave = Oktave.eingestrichene
+
+    var line: Int {
+        return grundTon.values.baseLine + oktave.values.lineDelta
+    }
+    
+    var semitones: Int {
+        return grundTon.values.semitones + vorzeichen.values.deltaSemitones + (oktave.values.ordinal * 12)
+    }
+    
+    var describe: String {
+        var name = oktave.values.upper
+        ? 
+        oktave.values.postPräfix + grundTon.values.name.uppercaseString + vorzeichen.values.name
+        :
+        grundTon.values.name + vorzeichen.values.name + oktave.values.postPräfix
+        
+        return "\(name) - Halbtöne: \(semitones), Linie: \(line)"
+    }
+}
+
 enum IntervalModifier {
     case rein, groß, klein, übermäßig, doppeltÜbermäßig, vermindert, doppeltVermindert, tritonus
 
@@ -32,12 +154,16 @@ enum IntervalType {
     }
 }
 
-// ♯ ♭
-
-
 struct Interval {
-    var type = IntervalType.Prim
-    var modifier = IntervalType.Prim.values.baseModifier
+    var type: IntervalType
+    var modifier: IntervalModifier
+    
+    init() {
+        
+        self.type = IntervalType.Prim
+        self.modifier = IntervalType.Prim.values.baseModifier
+        
+    }
     
     init(type: IntervalType, modifier: IntervalModifier) {
         self.type = type
@@ -110,7 +236,26 @@ struct Interval {
     var describe: String {
         return "\(name) (\(type.values.lines) , \(semitones))"
     }
+    
+    static func determineFromNote(note1: Note, note2: Note) -> Interval {
+        
+        
+        
+        return Interval()
+    }
 }
+
+var c = Note()
+c.grundTon = .c
+var f = Note()
+f.grundTon = .f
+println(c.describe)
+println(f.describe)
+
+var i = Interval.determineFromNote(c, note2: f)
+println(i.describe)
+
+
 
 var terz  = Interval(type: .Terz, modifier: .groß)
 var tri   = Interval(type: .Quinte, modifier: .vermindert)
@@ -120,134 +265,14 @@ var tri4  = Interval(type: .Quinte, modifier: .tritonus)
 var tri5  = Interval(type: .Prim, modifier: .tritonus)
 var quarte  = Interval(type: .Quarte, modifier: .doppeltVermindert)
 
-print("\(terz.describe)\n")
-print("\(tri.describe)\n")
-print("\(tri2.describe)\n")
-print("\(tri3.describe)\n")
-print("\(tri4.describe)\n")
-print("\(tri5.describe)\n")
-print("\(quarte.describe)\n")
+// print("\(terz.describe)\n")
+// print("\(tri.describe)\n")
+// print("\(tri2.describe)\n")
+// print("\(tri3.describe)\n")
+// print("\(tri4.describe)\n")
+// print("\(tri5.describe)\n")
+// print("\(quarte.describe)\n")
 
-
-/*******************************************************************/
-enum Grundton {
-    case c, d, e, f, g, a, h
-
-    var values: (name: String, line: Int, semitones: Int) {
-        switch self {
-            case c:
-                return ("c", 0, 0)
-            case d:
-                return ("d", 1, 2)
-            case e:
-                return ("e", 2, 4)
-            case f:
-                return ("f", 3, 5)
-            case g:
-                return ("g", 4, 7)
-            case a:
-                return ("a", 5, 9)
-            case h:
-                return ("h", 6, 11)
-        }
-    }
-}
-
-enum Vorzeichen {
-    case ohne, be, doppelBe, kreuz, doppelKreuz
-    
-    var values: (name: String, deltaSemitones: Int) {
-        switch self {
-            case ohne:
-                return ("", 0)
-            case be:
-                return ("♭", -1)
-            case doppelBe:
-                return ("♭♭", -2) // UTF-8: �
-            case kreuz:
-                return ("♯", 1)
-            case doppelKreuz:
-                return ("♯♯", 2)  // UTF-8: �
-        }
-    }
-}
-
-enum Oktave {
-    case subsubkontra, subkontra, kontra, große, kleine, 
-    eingestrichene, zweigestrichene, dreigestrichene, viergestrichene, fünfgestrichene
-    // die eingestrichene ist das c' auf der ersten Hilfslinie unten im Violinschlüssel
-    
-    var values: (lineDelta: Int, numeric: Int, upper: Bool, postPräfix: String) {
-        switch self {
-            case .subsubkontra:
-                return (-35, -5, true, ",,,")
-            case .subkontra:
-                return (-28, -4, true, ",,")
-            case .kontra:
-                return (-21, -3, true, ",")
-            case .große:
-                return (-14, -2, true, "")
-            case .kleine:
-                return (-7, -1, false, "")
-            case .eingestrichene:
-                return (0, 0, false, "'")
-            case .zweigestrichene:
-                return (7, 1, false, "''")
-            case .dreigestrichene:
-                return (14, 2, false, "'''")
-            case .viergestrichene:
-                return (21, 3, false, "''''")
-            case .fünfgestrichene:
-                return (28, 4, false, "'''''")
-        }
-    }
-}
-
-enum Notenschlüssel {
-    case violin, bass
-    
-    var values: (name: String, lineDelta: Int) /* delta Notenlinien */ {
-        switch self {
-            case .violin:
-                return ("Violinschlüssel", 0)
-            case .bass:
-                return ("Bassschlüssel", 12)
-        }
-    }
-}
-
-// Meine Definition:        --12--
-// ---------------------10-----------------
-// ------------------8---------------------
-// ---------------6------------------------
-// ------------4---------------------------
-// ---------2------------------------------
-//     --0--   <-- Linie 0
-
-struct Note {
-    var grundTon = Grundton.c
-    var vorzeichen = Vorzeichen.ohne
-    var oktave = Oktave.eingestrichene
-    var notenschlüssel = Notenschlüssel.violin
-    
-    var line: Int {
-        return grundTon.values.line + oktave.values.lineDelta + notenschlüssel.values.lineDelta
-    }
-    
-    var semitones: Int {
-        return grundTon.values.semitones + vorzeichen.values.deltaSemitones + (oktave.values.numeric * 12)
-    }
-    
-    var describe: String {
-        var name = oktave.values.upper
-        ? 
-        oktave.values.postPräfix + grundTon.values.name.uppercaseString + vorzeichen.values.name
-        :
-        grundTon.values.name + vorzeichen.values.name + oktave.values.postPräfix
-        
-        return "\(name) - \(notenschlüssel.values.name), Halbtöne: \(semitones), Linie: \(line)"
-    }
-}
 
 var d = Note()
 var fis = Note()
@@ -257,11 +282,5 @@ d.grundTon = .d
 fis.grundTon = .f
 fis.vorzeichen = .kreuz
 
-println(d.describe)
-println(fis.describe)
-
-
-
-
-
-
+// println(d.describe)
+// println(fis.describe)
