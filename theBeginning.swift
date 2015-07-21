@@ -302,14 +302,28 @@ struct Interval {
         
         let deltaLines = abs(note1.line - note2.line)
         let deltaSemitones = abs(note1.semitones - note2.semitones)
-        println("\(note1.name) ~ \(note2.name)")
-        println("deltaLines:     \(deltaLines)")
-        println("deltaSemitones: \(deltaSemitones)")
+        let octaves = deltaSemitones / 12
+        var remainLines = deltaLines
+        var remainSemitones = deltaSemitones
+        if deltaLines > 7 {
+            remainLines = deltaLines % 7
+            remainSemitones = deltaSemitones % 12
+        }
+
+        println("\(note1.name) ~       \(note2.name)")
+        println("deltaLines:           \(deltaLines)")
+        println("deltaSemitones:       \(deltaSemitones)")
+
+        if deltaLines > 7 {
+            println("octaves:              \(octaves)")
+            println("remainLines:          \(remainLines)")
+            println("remainSemitones:      \(remainSemitones)")
+        }        
 
         var i = Interval()
-        if let type = IntervalType.intervalTypeForDeltaLines(deltaLines) {
+        if let type = IntervalType.intervalTypeForDeltaLines(remainLines) {
             i.type = type
-            let modifySemitones = deltaSemitones - type.values.semitones
+            let modifySemitones = remainSemitones - type.values.semitones
             println("modifySemitones: \(modifySemitones)")
             if let modifier = IntervalModifier.intervalModifierForModifySemitones(modifySemitones, baseModifier: type.values.baseModifier) {
                 i.modifier = modifier
@@ -320,25 +334,48 @@ struct Interval {
 }
 
 var c = Note()
+var a = Note()
+var C = Note()
 var f = Note()
-var fis = Note()
-c.grundTon = .a
+var Fis = Note()
+a.grundTon = .a
+C.oktave = .groß
 f.grundTon = .f
-fis.grundTon = .f
-fis.oktave = .groß
-fis.vorzeichen = .kreuz
+Fis.grundTon = .f
+Fis.oktave = .groß
+Fis.vorzeichen = .kreuz
 
 println("------------------------")
 println(c.describe)
+println(a.describe)
+println(C.describe)
 println(f.describe)
-println(fis.describe)
+println(Fis.describe)
 
 println("------------------------")
-var i = Interval.determineFromNote(f, note2: c)
+var i = Interval.determineFromNote(f, note2: a)
 println(i!.name)
 
 println("------------------------")
-i = Interval.determineFromNote(fis, note2: c)
+i = Interval.determineFromNote(Fis, note2: c)
+println(i!.name)
+
+println("------------------------")
+i = Interval.determineFromNote(Fis, note2: C)
+println(i!.name)
+
+println("------------------------")
+i = Interval.determineFromNote(c, note2: C)
+println(i!.name)
+
+var A = Note()
+A.grundTon = .a
+A.oktave = .klein
+var aisis = Note()
+aisis.grundTon = .a
+aisis.vorzeichen = .doppelKreuz
+println("------------------------")
+i = Interval.determineFromNote(A, note2: aisis)
 println(i!.name)
 
 
@@ -360,7 +397,7 @@ var quarte  = Interval(type: .Quarte, modifier: .doppeltVermindert)
 
 
 var d = Note()
-fis = Note()
+var fis = Note()
 
 d.grundTon = .d
 
