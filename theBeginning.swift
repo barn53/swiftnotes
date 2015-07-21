@@ -45,8 +45,8 @@ enum Vorzeichen {
 }
 
 enum Oktave {
-    case subsubkontra, subkontra, kontra, große, kleine, 
-    eingestrichene, zweigestrichene, dreigestrichene, viergestrichene, fünfgestrichene
+    case subsubkontra, subkontra, kontra, groß, klein, 
+    eingestrichen, zweigestrichen, dreigestrichen, viergestrichen, fünfgestrichen
     // die eingestrichene ist das c' auf der ersten Hilfslinie unten im Violinschlüssel
     
     var values: (lineDelta: Int, ordinal: Int, upper: Bool, postPräfix: String) {
@@ -57,19 +57,19 @@ enum Oktave {
                 return (-28, -4, true, ",,")
             case .kontra:
                 return (-21, -3, true, ",")
-            case .große:
+            case .groß:
                 return (-14, -2, true, "")
-            case .kleine:
+            case .klein:
                 return (-7, -1, false, "")
-            case .eingestrichene:
+            case .eingestrichen:
                 return (0, 0, false, "'")
-            case .zweigestrichene:
+            case .zweigestrichen:
                 return (7, 1, false, "''")
-            case .dreigestrichene:
+            case .dreigestrichen:
                 return (14, 2, false, "'''")
-            case .viergestrichene:
+            case .viergestrichen:
                 return (21, 3, false, "''''")
-            case .fünfgestrichene:
+            case .fünfgestrichen:
                 return (28, 4, false, "'''''")
         }
     }
@@ -94,12 +94,12 @@ enum Notenschlüssel {
 // ---------------6------------------------
 // ------------4---------------------------
 // ---------2------------------------------
-//     --0--   <-- Linie 0
+//     --0--   <-- Linie 0 Bezugspunkt (Violinschlüssel c')
 
 struct Note {
     var grundTon = Grundton.c
     var vorzeichen = Vorzeichen.ohne
-    var oktave = Oktave.eingestrichene
+    var oktave = Oktave.eingestrichen
 
     var line: Int {
         return grundTon.values.baseLine + oktave.values.lineDelta
@@ -109,13 +109,14 @@ struct Note {
         return grundTon.values.semitones + vorzeichen.values.deltaSemitones + (oktave.values.ordinal * 12)
     }
     
-    var describe: String {
-        var name = oktave.values.upper
+    var name: String {
+        return oktave.values.upper
         ? 
         oktave.values.postPräfix + grundTon.values.name.uppercaseString + vorzeichen.values.name
         :
         grundTon.values.name + vorzeichen.values.name + oktave.values.postPräfix
-        
+    }
+    var describe: String {
         return "\(name) - Halbtöne: \(semitones), Linie: \(line)"
     }
 }
@@ -135,6 +136,43 @@ enum IntervalModifier {
             case tritonus:          return ("tritonus",            100) // +1 bei Quarte, -1 bei Quinte // tritone
         }
     }
+    
+    static func intervalModifierForModifySemitones(semitones: Int, baseModifier: IntervalModifier) -> IntervalModifier? {
+        switch baseModifier {
+            case .rein:
+                switch semitones {
+                    case 0:
+                        return .rein
+                    case -1:
+                        return .vermindert
+                    case -2:
+                        return .doppeltVermindert
+                    case 1:
+                        return .übermäßig
+                    case 2:
+                        return .doppeltÜbermäßig
+                    default:
+                        return nil
+                }
+            case .groß:
+                switch semitones {
+                    case 0:
+                        return .groß
+                    case -1:
+                        return .klein
+                    case -2:
+                        return .vermindert
+                    case 1:
+                        return .übermäßig
+                    case 2:
+                        return .doppeltÜbermäßig
+                    default:
+                        return nil
+                }
+            default:
+                return nil
+        }
+    }
 }
 
 enum IntervalType {
@@ -150,6 +188,29 @@ enum IntervalType {
             case Sexte:    return ("Sexte",  5, 9,  .groß)  // 6th
             case Septime:  return ("Septe",  6, 11, .groß)  // 7th
             case Oktave:   return ("Oktave", 7, 12, .rein)  // octave
+        }
+    }
+    
+    static func intervalTypeForDeltaLines(lines: Int) -> IntervalType? {
+        switch lines {
+            case 0:
+                return .Prim
+            case 1:
+                return .Second
+            case 2:
+                return .Terz
+            case 3:
+                return .Quarte
+            case 4:
+                return .Quinte
+            case 5:
+                return .Sexte
+            case 6:
+                return .Septime
+            case 7:
+                return .Oktave
+            default:
+                return nil
         }
     }
 }
@@ -234,27 +295,51 @@ struct Interval {
     }
     
     var describe: String {
-        return "\(name) (\(type.values.lines) , \(semitones))"
+        return "\(name), lines: \(type.values.lines), semitones: \(semitones)"
     }
     
-    static func determineFromNote(note1: Note, note2: Note) -> Interval {
+    static func determineFromNote(note1: Note, note2: Note) -> Interval? {
         
-        
-        
-        return Interval()
+        let deltaLines = abs(note1.line - note2.line)
+        let deltaSemitones = abs(note1.semitones - note2.semitones)
+        println("\(note1.name) ~ \(note2.name)")
+        println("deltaLines:     \(deltaLines)")
+        println("deltaSemitones: \(deltaSemitones)")
+
+        var i = Interval()
+        if let type = IntervalType.intervalTypeForDeltaLines(deltaLines) {
+            i.type = type
+            let modifySemitones = deltaSemitones - type.values.semitones
+            println("modifySemitones: \(modifySemitones)")
+            if let modifier = IntervalModifier.intervalModifierForModifySemitones(modifySemitones, baseModifier: type.values.baseModifier) {
+                i.modifier = modifier
+            }
+        }
+        return i
     }
 }
 
 var c = Note()
-c.grundTon = .c
 var f = Note()
+var fis = Note()
+c.grundTon = .a
 f.grundTon = .f
+fis.grundTon = .f
+fis.oktave = .groß
+fis.vorzeichen = .kreuz
+
+println("------------------------")
 println(c.describe)
 println(f.describe)
+println(fis.describe)
 
-var i = Interval.determineFromNote(c, note2: f)
-println(i.describe)
+println("------------------------")
+var i = Interval.determineFromNote(f, note2: c)
+println(i!.name)
 
+println("------------------------")
+i = Interval.determineFromNote(fis, note2: c)
+println(i!.name)
 
 
 var terz  = Interval(type: .Terz, modifier: .groß)
@@ -275,7 +360,7 @@ var quarte  = Interval(type: .Quarte, modifier: .doppeltVermindert)
 
 
 var d = Note()
-var fis = Note()
+fis = Note()
 
 d.grundTon = .d
 
@@ -284,3 +369,9 @@ fis.vorzeichen = .kreuz
 
 // println(d.describe)
 // println(fis.describe)
+
+
+
+
+
+
