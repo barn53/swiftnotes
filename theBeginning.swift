@@ -333,6 +333,16 @@ struct Interval {
     }
 }
 
+
+enum Akkord {
+    
+}
+
+
+enum Tonleiter {
+    
+}
+
 var c = Note()
 var a = Note()
 var C = Note()
@@ -406,6 +416,44 @@ fis.vorzeichen = .kreuz
 
 // println(d.describe)
 // println(fis.describe)
+
+
+
+
+
+/*
+
+ Was will ich berechnen können?
+ 
+ - Intervall aus zwei Noten bestimmen
+ - zweite Note aus erster Note und Intervall
+ 
+ - Akkord aus drei oder vier Noten bestimmen
+ - Folgenoten aus Grund-Note und Akkord
+ 
+ - Tonleiter-Noten aus Grund-Note und Tonleiter erzeugen
+ - Tonleiter aus Noten bestimmen 
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
