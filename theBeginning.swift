@@ -339,6 +339,10 @@ enum Akkord {
 }
 
 
+enum Tonart {
+    
+}
+
 enum Tonleiter {
     
 }
@@ -427,12 +431,17 @@ fis.vorzeichen = .kreuz
  
  - Intervall aus zwei Noten bestimmen
  - zweite Note aus erster Note und Intervall
+ - zu einem Intervall alle möglichen Modifier bestimmen
  
  - Akkord aus drei oder vier Noten bestimmen
  - Folgenoten aus Grund-Note und Akkord
  
+ - Note (von Tonart) nach Tonart modulieren - geht das so?
+ 
  - Tonleiter-Noten aus Grund-Note und Tonleiter erzeugen
  - Tonleiter aus Noten bestimmen 
+ - Paralleltonleiter bestimmen
+ - Folgetonleiter bestimmen 
 
 */
 
