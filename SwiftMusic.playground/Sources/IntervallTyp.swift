@@ -1,7 +1,7 @@
-enum IntervalType {
+public enum IntervalType {
     case Prim, Second, Terz, Quarte, Quinte, Sexte, Septime, Oktave
 
-    var values: (name: String, lines: Int, semitones: Int, baseModifier: IntervalModifier) {
+    public var values: (name: String, lines: Int, semitones: Int, baseModifier: IntervalModifier) {
         switch self {
         case Prim:     return ("Prim",   0, 0,  .rein)  // unison
         case Second:   return ("Second", 1, 2,  .groß)  // 2nd
@@ -14,7 +14,7 @@ enum IntervalType {
         }
     }
 
-    static func intervalTypeForDeltaLines(lines: Int) -> IntervalType? {
+    public static func intervalTypeForDeltaLines(lines: Int) -> IntervalType? {
         switch lines {
         case 0:
             return .Prim

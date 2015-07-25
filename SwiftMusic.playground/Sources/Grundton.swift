@@ -1,7 +1,7 @@
-enum Grundton {
+public enum Grundton {
     case c, d, e, f, g, a, h
 
-    var values: (name: String, baseLine: Int, semitones: Int) {
+    public var values: (name: String, baseLine: Int, semitones: Int) {
         switch self {
         case c:
             return ("c", 0, 0)

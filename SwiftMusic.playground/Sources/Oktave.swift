@@ -1,9 +1,9 @@
-enum Oktave {
+public enum Oktave {
     case subsubkontra, subkontra, kontra, groß, klein,
     eingestrichen, zweigestrichen, dreigestrichen, viergestrichen, fünfgestrichen
     // die eingestrichene ist das c' auf der ersten Hilfslinie unten im Violinschlüssel
 
-    var values: (lineDelta: Int, ordinal: Int, upper: Bool, postPräfix: String) {
+    public var values: (lineDelta: Int, ordinal: Int, upper: Bool, postPräfix: String) {
         switch self {
         case .subsubkontra:
             return (-35, -5, true, ",,,")

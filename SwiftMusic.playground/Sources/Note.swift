@@ -6,27 +6,32 @@
 // ---------2------------------------------
 //     --0--   <-- Linie 0 Bezugspunkt (Violinschlüssel c')
 
-struct Note {
-    var grundTon = Grundton.c
-    var vorzeichen = Vorzeichen.ohne
-    var oktave = Oktave.eingestrichen
+public struct Note {
+    public var grundTon = Grundton.c
+    public var vorzeichen = Vorzeichen.ohne
+    public var oktave = Oktave.eingestrichen
 
-    var line: Int {
+    public init() {
+
+    }
+
+    public var line: Int {
         return grundTon.values.baseLine + oktave.values.lineDelta
     }
 
-    var semitones: Int {
+    public var semitones: Int {
         return grundTon.values.semitones + vorzeichen.values.deltaSemitones + (oktave.values.ordinal * 12)
     }
 
-    var name: String {
+    public var name: String {
         return oktave.values.upper
             ?
                 oktave.values.postPräfix + grundTon.values.name.uppercaseString + vorzeichen.values.name
             :
             grundTon.values.name + vorzeichen.values.name + oktave.values.postPräfix
     }
-    var describe: String {
+
+    public var describe: String {
         return "\(name) - Halbtöne: \(semitones), Linie: \(line)"
     }
 }

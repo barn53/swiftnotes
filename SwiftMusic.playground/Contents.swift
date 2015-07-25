@@ -1,11 +1,4 @@
 
-/*******************************************************************/
-
-// ♯ ♭
-
-
-
-
 var c = Note()
 var a = Note()
 var C = Note()
@@ -18,28 +11,29 @@ Fis.grundTon = .f
 Fis.oktave = .groß
 Fis.vorzeichen = .kreuz
 
-println("------------------------")
-println(c.describe)
-println(a.describe)
-println(C.describe)
-println(f.describe)
-println(Fis.describe)
 
-println("------------------------")
+print("------------------------")
+print(c.describe)
+print(a.describe)
+print(C.describe)
+print(f.describe)
+print(Fis.describe)
+
+print("------------------------")
 var i = Interval.determineFromNote(f, note2: a)
-println(i!.name)
+print(i!.name)
 
-println("------------------------")
+print("------------------------")
 i = Interval.determineFromNote(Fis, note2: c)
-println(i!.name)
+print(i!.name)
 
-println("------------------------")
+print("------------------------")
 i = Interval.determineFromNote(Fis, note2: C)
-println(i!.name)
+print(i!.name)
 
-println("------------------------")
+print("------------------------")
 i = Interval.determineFromNote(c, note2: C)
-println(i!.name)
+print(i!.name)
 
 var A = Note()
 A.grundTon = .a
@@ -47,9 +41,9 @@ A.oktave = .klein
 var aisis = Note()
 aisis.grundTon = .a
 aisis.vorzeichen = .doppelKreuz
-println("------------------------")
+print("------------------------")
 i = Interval.determineFromNote(A, note2: aisis)
-println(i!.name)
+print(i!.name)
 
 
 var terz  = Interval(type: .Terz, modifier: .groß)
@@ -60,13 +54,13 @@ var tri4  = Interval(type: .Quinte, modifier: .tritonus)
 var tri5  = Interval(type: .Prim, modifier: .tritonus)
 var quarte  = Interval(type: .Quarte, modifier: .doppeltVermindert)
 
-// print("\(terz.describe)\n")
-// print("\(tri.describe)\n")
-// print("\(tri2.describe)\n")
-// print("\(tri3.describe)\n")
-// print("\(tri4.describe)\n")
-// print("\(tri5.describe)\n")
-// print("\(quarte.describe)\n")
+print("\(terz.describe)\n")
+print("\(tri.describe)\n")
+print("\(tri2.describe)\n")
+print("\(tri3.describe)\n")
+print("\(tri4.describe)\n")
+print("\(tri5.describe)\n")
+print("\(quarte.describe)\n")
 
 
 var d = Note()
@@ -77,9 +71,8 @@ d.grundTon = .d
 fis.grundTon = .f
 fis.vorzeichen = .kreuz
 
-// println(d.describe)
-// println(fis.describe)
-
+print(d.describe)
+print(fis.describe)
 
 
 

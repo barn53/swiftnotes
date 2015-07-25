@@ -1,7 +1,7 @@
-enum IntervalModifier {
+public enum IntervalModifier {
     case rein, groß, klein, übermäßig, doppeltÜbermäßig, vermindert, doppeltVermindert, tritonus
 
-    var values: (name: String, semitones: Int) {
+    public var values: (name: String, semitones: Int) {
         switch self {
         case rein:              return ("rein",                0) // perfect
         case groß:              return ("groß",                0) // major
@@ -14,7 +14,7 @@ enum IntervalModifier {
         }
     }
 
-    static func intervalModifierForModifySemitones(semitones: Int, baseModifier: IntervalModifier) -> IntervalModifier? {
+    public static func intervalModifierForModifySemitones(semitones: Int, baseModifier: IntervalModifier) -> IntervalModifier? {
         switch baseModifier {
         case .rein:
             switch semitones {

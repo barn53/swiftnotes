@@ -1,7 +1,7 @@
-enum Vorzeichen {
+public enum Vorzeichen {
     case ohne, be, doppelBe, kreuz, doppelKreuz
 
-    var values: (name: String, deltaSemitones: Int) {
+    public var values: (name: String, deltaSemitones: Int) {
         switch self {
         case ohne:
             return ("", 0)
