@@ -81,6 +81,8 @@ print(fis.describe)
 
 Was will ich berechnen können?
 
+- Note(n) parsen: c#' d'' D eb'
+
 - Intervall aus zwei Noten bestimmen
 - zweite Note aus erster Note und Intervall
 - zu einem Intervall alle möglichen Modifier bestimmen
